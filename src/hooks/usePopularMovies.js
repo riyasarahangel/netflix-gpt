@@ -1,10 +1,16 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { API_OPTIONS } from "../utils/constants";
 import { addPopularMovies } from "../utils/moviesSlice";
 
+
+
 const usePopularMovies = () => {
   const dispatch = useDispatch();
+
+  const popularMovies = useSelector(
+    (store) => store.movies.nowPlayingMovies
+  );
 
   const getPopularMovies = async () => {
     const data = await fetch(
@@ -16,8 +22,8 @@ const usePopularMovies = () => {
     dispatch(addPopularMovies(json.results));
   };
   useEffect(() => {
-    getPopularMovies();
-  }, []); //making the API call
+    !popularMovies && getPopularMovies();
+  }, []); //making the API call when it is empty and doesn't have a value else ignoring the API call for memoization
 };
 
 export default usePopularMovies;
